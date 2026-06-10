@@ -1,1 +1,50 @@
+async function sendMessage(){
 
+    let input = document.getElementById("msg");
+    let text = input.value.trim();
+
+    if(!text) return;
+
+    let chat = document.getElementById("chat");
+
+    let user = document.createElement("div");
+    user.className = "message user";
+    user.innerText = text;
+    chat.appendChild(user);
+
+    input.value = "";
+
+    try{
+
+        let response = await fetch(
+            "http://localhost:8000/chat",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    message:text
+                })
+            }
+        );
+
+        let data = await response.json();
+
+        let bot = document.createElement("div");
+        bot.className = "message bot";
+        bot.innerText = data.response;
+
+        chat.appendChild(bot);
+
+        chat.scrollTop = chat.scrollHeight;
+
+    }catch(error){
+
+        let bot = document.createElement("div");
+        bot.className = "message bot";
+        bot.innerText = "Backend connection failed.";
+
+        chat.appendChild(bot);
+    }
+}
