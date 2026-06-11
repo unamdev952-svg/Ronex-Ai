@@ -1,39 +1,9 @@
-import logging
-import time
-from typing import Callable
-from fastapi import FastAPI, Request, Response
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+# Inside backend/app.py, update the router inclusion block:
+from routers.auth import router as auth_router
 
-from config import settings
-from routers.ai import router as ai_router
-from routers.health import router as health_router
-
-# Core application logging platform layout declaration
-logging.basicConfig(
-    level=getattr(logging, settings.LOG_LEVEL.upper(), logging.INFO),
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()]
-)
-logger = logging.getLogger("ronex_ai_backend")
-
-# Initialize and construct the core FastAPI instance
-app = FastAPI(
-    title=settings.APP_NAME,
-    description="Production-grade application backend layer underpinning the Ronex AI user matrix deployment.",
-    version="1.0.0",
-    docs_url="/docs" if settings.ENVIRONMENT != "production" else None,
-    redoc_url="/redoc" if settings.ENVIRONMENT != "production" else None,
-)
-
-# Apply restrictive/flexible Cross-Origin Resource Sharing bindings for Client apps
-origins = [org.strip() for org in settings.ALLOWED_ORIGINS.split(",") if org.strip()]
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+app.include_router(health_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1") # Added auth routing
+app.include_router(ai_router, prefix="/api/v1")
 )
 
 # Request-response interception middleware to calculate operational times
