@@ -1,50 +1,49 @@
-async function sendMessage(){
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ronex AI Client</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
 
-    let input = document.getElementById("msg");
-    let text = input.value.trim();
+    <div id="login-overlay" class="overlay">
+        <div class="login-card">
+            <h2>Welcome to Ronex AI</h2>
+            <p>Please log in with your name to access the chatbot.</p>
+            <input type="text" id="username-input" placeholder="Enter your name..." autocomplete="off">
+            <button id="login-btn">Launch Chatbot</button>
+            <p id="login-error" class="error-msg"></p>
+        </div>
+    </div>
 
-    if(!text) return;
+    <div id="app-container" class="app-container hidden">
+        <header class="chat-header">
+            <div class="brand-info">
+                <img src="../assets/logo.png" alt="Ronex Logo" class="app-logo" onerror="this.style.display='none'">
+                <h1>Ronex AI</h1>
+            </div>
+            <div class="user-profile">
+                <span id="user-display-name">Guest User</span>
+                <button id="logout-btn">Logout</button>
+            </div>
+        </header>
 
-    let chat = document.getElementById("chat");
+        <main class="chat-box" id="chat-box">
+            <div class="message system-msg">
+                <p>System secure connection established. Welcome to Ronex AI platform interface.</p>
+            </div>
+        </main>
 
-    let user = document.createElement("div");
-    user.className = "message user";
-    user.innerText = text;
-    chat.appendChild(user);
+        <footer class="chat-footer">
+            <form id="chat-form" onsubmit="event.preventDefault();">
+                <input type="text" id="message-input" placeholder="Type a message to Ronex AI..." autocomplete="off" required>
+                <button type="submit" id="send-btn">Send Message</button>
+            </form>
+        </footer>
+    </div>
 
-    input.value = "";
-
-    try{
-
-        let response = await fetch(
-            "http://localhost:8000/chat",
-            {
-                method:"POST",
-                headers:{
-                    "Content-Type":"application/json"
-                },
-                body:JSON.stringify({
-                    message:text
-                })
-            }
-        );
-
-        let data = await response.json();
-
-        let bot = document.createElement("div");
-        bot.className = "message bot";
-        bot.innerText = data.response;
-
-        chat.appendChild(bot);
-
-        chat.scrollTop = chat.scrollHeight;
-
-    }catch(error){
-
-        let bot = document.createElement("div");
-        bot.className = "message bot";
-        bot.innerText = "Backend connection failed.";
-
-        chat.appendChild(bot);
-    }
-}
+    <script src="script.js"></script>
+</body>
+</html>
